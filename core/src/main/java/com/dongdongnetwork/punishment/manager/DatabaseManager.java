@@ -1,10 +1,8 @@
 package com.dongdongnetwork.punishment.manager;
-
 import com.zaxxer.hikari.HikariDataSource;
 import com.dongdongnetwork.punishment.Universal;
 import com.dongdongnetwork.punishment.utils.DynamicDataSource;
 import com.dongdongnetwork.punishment.utils.SQLQuery;
-
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
@@ -12,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 public class DatabaseManager {
     private HikariDataSource dataSource;
     private boolean useMySQL;
@@ -21,10 +18,8 @@ public class DatabaseManager {
     public static synchronized DatabaseManager get() {
         return instance == null ? instance = new DatabaseManager() : instance;
     }
-
     public void setup(boolean useMySQLServer) {
         useMySQL = useMySQLServer;
-
         try {
             dataSource = new DynamicDataSource(useMySQL).generateDataSource();
         } catch (ClassNotFoundException ex) {
@@ -32,11 +27,9 @@ public class DatabaseManager {
             Universal.get().debug(ex.getMessage());
             return;
         }
-
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
     }
-
     public void shutdown() {
         if (!useMySQL) {
             try(Connection connection = dataSource.getConnection(); final PreparedStatement statement = connection.prepareStatement("SHUTDOWN")){
@@ -46,36 +39,28 @@ public class DatabaseManager {
                 Universal.get().debugException(exc);
             }
         }
-
         dataSource.close();
     }
-    
     private CachedRowSet createCachedRowSet() throws SQLException {
     	if (factory == null) {
     		factory = RowSetProvider.newFactory();
     	}
     	return factory.createCachedRowSet();
     }
-
     public void executeStatement(SQLQuery sql, Object... parameters) {
         executeStatement(sql, false, parameters);
     }
-
     public ResultSet executeResultStatement(SQLQuery sql, Object... parameters) {
         return executeStatement(sql, true, parameters);
     }
-
     private ResultSet executeStatement(SQLQuery sql, boolean result, Object... parameters) {
         return executeStatement(sql.toString(), result, parameters);
     }
-
     private synchronized ResultSet executeStatement(String sql, boolean result, Object... parameters) {
     	try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-
     		for (int i = 0; i < parameters.length; i++) {
     			statement.setObject(i + 1, parameters[i]);
     		}
-
     		if (result) {
     			CachedRowSet results = createCachedRowSet();
     			results.populate(statement.executeQuery());
