@@ -1,8 +1,6 @@
 package com.dongdongnetwork.punishment.manager;
-
 import com.dongdongnetwork.punishment.Universal;
 import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,9 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 public class LogManager {
-	
     private final File logsFolder;
-
     public LogManager() {
         Universal universal = Universal.get();
         logsFolder = new File(universal.getMethods().getDataFolder(), "logs");
@@ -31,7 +27,6 @@ public class LogManager {
             }
         }
     }
-
     public final void checkLastLog(boolean force) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -58,7 +53,6 @@ public class LogManager {
             }
         }
     }
-
     private void gzipFile(InputStream in, String to) throws IOException {
     	try (GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(to))) {
             byte[] buffer = new byte[4096];
@@ -70,5 +64,4 @@ public class LogManager {
     		in.close();
     	}
     }
-    
 }
