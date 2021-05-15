@@ -44,24 +44,13 @@ public class Universal {
             log("Failed enabling database-manager...");
             debugException(ex);
         }
-
         mi.setupMetrics();
         PunishmentManager.get().setup();
-
         for (Command command : Command.values()) {
             for (String commandName : command.getNames()) {
                 mi.setCommandExecutor(commandName, command.getTabCompleter());
             }
         }
-		/*
-        String upt = "You have the newest version";
-        String response = getFromURL("https://api.spigotmc.org/legacy/update.php?resource=8695");
-        if (response == null) {
-            upt = "";
-        } else if ((!mi.getVersion().startsWith(response))) {
-            upt = "There is a new version available! [" + response + "]";
-        }
-		*/
         if (mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
 
         } else {
@@ -77,19 +66,15 @@ public class Universal {
     public boolean isBungee() {
         return mi.isBungee();
     }
-
     public Map<String, String> getIps() {
         return ips;
     }
-
     public static boolean isRedis() {
         return redis;
     }
-
     public Gson getGson() {
         return gson;
     }
-
     public String getFromURL(String surl) {
         String response = null;
         try {
@@ -104,13 +89,11 @@ public class Universal {
         }
         return response;
     }
-
     public boolean isMuteCommand(String cmd) {
         return isMuteCommand(cmd, getMethods().getStringList(getMethods().getConfig(), "MuteCommands"));
     }
     boolean isMuteCommand(String cmd, List<String> muteCommands) {
         String[] words = cmd.split(" ");
-        // Handle commands with colons
         if (words[0].indexOf(':') != -1) {
             words[0] = words[0].split(":", 2)[1];
         }
@@ -121,7 +104,6 @@ public class Universal {
         }
         return false;
     }
-
     boolean muteCommandMatches(String[] commandWords, String muteCommand) {
         if (commandWords[0].equalsIgnoreCase(muteCommand)) {
             return true;
@@ -160,9 +142,7 @@ public class Universal {
             getIps().remove(name);
             getIps().put(name, ip);
         }
-
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
-
         if (interimData == null) {
             if (getMethods().getBoolean(mi.getConfig(), "LockdownOnError", true)) {
                 return "Failed to load player data!";
@@ -170,22 +150,17 @@ public class Universal {
                 return null;
             }
         }
-
         Punishment pt = interimData.getBan();
-
         if (pt == null) {
             interimData.accept();
             return null;
         }
-
         return pt.getLayoutBSN();
     }
-
     public boolean hasPerms(Object player, String perms) {
         if (mi.hasPerms(player, perms)) {
             return true;
         }
-
         if (mi.getBoolean(mi.getConfig(), "EnableAllPermissionNodes", false)) {
             while (perms.contains(".")) {
                 perms = perms.substring(0, perms.lastIndexOf('.'));
@@ -196,19 +171,16 @@ public class Universal {
         }
         return false;
     }
-
     public void log(String msg) {
         mi.log(msg);
         debugToFile(msg);
     }
-
     public void debug(Object msg) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
             mi.log(msg.toString());
         }
         debugToFile(msg);
     }
-
     public void debugException(Exception exc) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -223,7 +195,6 @@ public class Universal {
         }
         debugException(ex);
     }
-
     private void debugToFile(Object msg) {
         File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
         if (!debugFile.exists()) {
