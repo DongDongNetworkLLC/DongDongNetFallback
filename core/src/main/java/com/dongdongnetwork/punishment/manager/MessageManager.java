@@ -1,14 +1,10 @@
 package com.dongdongnetwork.punishment.manager;
-
 import com.dongdongnetwork.punishment.MethodInterface;
 import com.dongdongnetwork.punishment.Universal;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 public class MessageManager {
-
     private static MethodInterface mi() {
     	return Universal.get().getMethods();
     }
@@ -32,7 +28,6 @@ public class MessageManager {
         String prefixStr = "";
         if(prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix", false))
             prefixStr = getMessage("General.Prefix")+" ";
-
         return prefixStr+getMessage(path, parameters);
     }
     public static List<String> getLayout(Object file, String path, String... parameters) {
@@ -60,7 +55,6 @@ public class MessageManager {
             mi.sendMessage(receiver, prefixString + message);
         }
     }
-
     private static String replace(String str, String... parameters) {
         for (int i = 0; i < parameters.length - 1; i = i + 2) {
             str = str.replaceAll("%" + parameters[i] + "%", parameters[i + 1]);
