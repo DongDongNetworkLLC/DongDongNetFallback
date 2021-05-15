@@ -1,5 +1,0 @@
-name: DongDongPunishment
-version: 1.0.0
-main: com.dongdongnetwork.punishment.bungee.BungeeMain
-author: DongDong Network
-softDepends: [RedisBungee, LuckPerms]
