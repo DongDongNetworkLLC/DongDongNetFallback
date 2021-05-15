@@ -36,7 +36,6 @@ public enum Command {
             new PunishmentProcessor(PunishmentType.TEMP_BAN),
             PunishmentType.TEMP_BAN.getConfSection("Usage"),
             "tempban"),
-
     MUTE(
             PunishmentType.MUTE.getPerms(),
             ".+",
@@ -44,7 +43,6 @@ public enum Command {
             new PunishmentProcessor(PunishmentType.MUTE),
             PunishmentType.MUTE.getConfSection("Usage"),
             "mute"),
-
     TEMP_MUTE(
             PunishmentType.TEMP_MUTE.getPerms(),
             "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
@@ -52,21 +50,18 @@ public enum Command {
             new PunishmentProcessor(PunishmentType.TEMP_MUTE),
             PunishmentType.TEMP_MUTE.getConfSection("Usage"),
             "tempmute"),
-
     UN_BAN("dongdong.punish." + PunishmentType.BAN.getName() + ".undo",
             "\\S+",
             new BasicTabCompleter("[Name/IP]"),
             new RevokeProcessor(PunishmentType.BAN),
             "Un" + PunishmentType.BAN.getConfSection("Usage"),
             "unban"),
-
     UN_MUTE("dongdong.punish." + PunishmentType.MUTE.getName() + ".undo",
             "\\S+",
             new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
             new RevokeProcessor(PunishmentType.MUTE),
             "Un" + PunishmentType.MUTE.getConfSection("Usage"),
             "unmute"),
-
     UN_PUNISH("dongdong.punish.all.undo",
             "[0-9]+",
             new BasicTabCompleter("<ID>"),
@@ -91,11 +86,9 @@ public enum Command {
             }),
             input -> {
                 Punishment punishment;
-
                 if (input.getPrimaryData().matches("[0-9]*")) {
                     int id = Integer.parseInt(input.getPrimaryData());
                     input.next();
-
                     punishment = PunishmentManager.get().getPunishment(id);
                 } else {
                     PunishmentType type = PunishmentType.valueOf(input.getPrimary().toUpperCase());
@@ -109,14 +102,11 @@ public enum Command {
                     } else {
                         input.next();
                     }
-
                     punishment = getPunishment(target, type);
                 }
-
                 String reason = processReason(input);
                 if (reason == null)
                     return;
-
                 if (punishment != null) {
                     punishment.updateReason(reason);
                     MessageManager.sendMessage(input.getSender(), "ChangeReason.Done",
@@ -127,7 +117,6 @@ public enum Command {
             },
             "ChangeReason.Usage",
             "change-reason"),
-
     BAN_LIST("dongdong.punish.bans",
             "([1-9][0-9]*)?",
             new BasicTabCompleter("<Page>"),
@@ -136,7 +125,6 @@ public enum Command {
                     "Bans", false, false),
             "Bans.Usage",
             "bans"),
-
     HISTORY("dongdong.punish.history",
             "\\S+( [1-9][0-9]*)?",
             new CleanTabCompleter((user, args) -> {
@@ -152,29 +140,23 @@ public enum Command {
                     "History", true, true),
             "History.Usage",
             "history"),
-
     CHECK("dongdong.punish.check",
             "\\S+",
             new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
             input -> {
                 String name = input.getPrimary();
-
                 String uuid = processName(input);
                 if (uuid == null)
                     return;
-
                 String ip = Universal.get().getIps().getOrDefault(name.toLowerCase(), "none cashed");
                 String loc = Universal.get().getMethods().getFromUrlJson("http://ip-api.com/json/" + ip, "country");
                 Punishment mute = PunishmentManager.get().getMute(uuid);
                 Punishment ban = PunishmentManager.get().getBan(uuid);
-
                 String cached = MessageManager.getMessage("Check.Cached", false);
                 String notCached = MessageManager.getMessage("Check.NotCached", false);
-
                 boolean nameCached = PunishmentManager.get().isCached(name.toLowerCase());
                 boolean ipCached = PunishmentManager.get().isCached(ip);
                 boolean uuidCached = PunishmentManager.get().isCached(uuid);
-
                 Object sender = input.getSender();
                 MessageManager.sendMessage(sender, "Check.Header", true, "NAME", name, "CACHED", nameCached ? cached : notCached);
                 MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid, "CACHED", uuidCached ? cached : notCached);
@@ -191,7 +173,6 @@ public enum Command {
                     MessageManager.sendMessage(sender, "Check.BanReason", false, "REASON", ban.getReason());
                 }
                 MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT", PunishmentManager.get().getCurrentWarns(uuid) + "");
-
                 MessageManager.sendMessage(sender, "Check.Note", false, "COUNT", PunishmentManager.get().getCurrentNotes(uuid) + "");
             },
             "Check.Usage",
@@ -240,52 +221,40 @@ public enum Command {
     public Predicate<String[]> getSyntaxValidator() {
         return this.syntaxValidator;
     }
-
     public Consumer<CommandInput> getCommandHandler() {
         return this.commandHandler;
     }
-
     public String getUsagePath() {
         return this.usagePath;
     }
-
     public String[] getNames() {
         return this.names;
     }
-
     public static class CommandInput {
         private Object sender;
         private String[] args;
-
         CommandInput(Object sender, String[] args) {
             this.sender = sender;
             this.args = args;
         }
-
         public String getPrimary() {
             return args.length == 0 ? null : args[0];
         }
-
         String getPrimaryData() {
             return getPrimary().toLowerCase();
         }
-
         public void removeArgument(int index) {
             args = ArrayUtils.remove(args, index);
         }
-
         public void next() {
             args = ArrayUtils.remove(args, 0);
         }
-
         public boolean hasNext() {
             return args.length > 0;
         }
-
         public Object getSender() {
             return this.sender;
         }
-
         public String[] getArgs() {
             return this.args;
         }
